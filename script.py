@@ -316,7 +316,7 @@ def reset_mode():
     if (now - lastscan) >= 180:  # 3 minutes
         print("resetting scan mode")
         scannermode = "idle"
-        lastscan = now
+    lastscan = now
 
 
 # mqttthread = threading.Thread(target=mqtt_loop, args="")
