@@ -1,3 +1,4 @@
+import barcodebuddy as bcb
 UPC_RGX_MAP = {
     "UPC-A": [r"^[0-9]{12}$"],
     "UPC-E": [r"^[01][0-9]{7}$"],
@@ -68,6 +69,7 @@ def handle_upc(type, code):
     if type == "UPC-A":
         if validate_upc_a(code):
             print("Processing UPC-A")
+            bcb.scan(code)
             return True
         else:
             print("Not a valid UPC-A code")
@@ -75,14 +77,15 @@ def handle_upc(type, code):
     elif type == "UPC-E":
         if validate_upc_e(code):
             print("Processing UPC-E")
+            bcb.scan(code)
             return True
         else:
             print("Not a valid UPC-E code")
             return False
     elif type.startswith("ISBN") or type == "EAN-13":
         return handle_ean_etc(type, code)
-    
-
+    else:
+        return False
 
 def validate_isbn_10(code):
     s = 0

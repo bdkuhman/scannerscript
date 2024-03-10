@@ -17,20 +17,17 @@ import re
 HA_URL = envvar("HA_URL")
 HA_API_KEY = envvar("HA_API_KEY")
 
-BBB_URL = envvar("BBB_URL")
-BBB_API_KEY = envvar("BBB_API_KEY")
-
 COMMAND_REGEX = envvar("CMD_REGEX", r"^_CMD:(.*)$")
 
 def handle_input(input):
     # wake_screen()
-    reset_mode()
+    check_timeout()
 
     if input.startswith("BAT_VOL="):
         print(f"Battery: {input}")
         return
 
-    if re.match(COMMAND_REGEX, input):
+    if mode.get_mode() == Mode.CMD or re.match(COMMAND_REGEX, input):
         handle_command(input)
         return
 
@@ -68,6 +65,9 @@ def scanner_loop():
     # The barcode we read.
     barcode = ""
 
+    bcb.init()
+    print()
+
     for event in device.read_loop():
         if event.type == ecodes.EV_KEY:
             eventdata = categorize(event)
@@ -76,9 +76,9 @@ def scanner_loop():
             if eventdata.keystate == 1:  # Keydown
                 scancode = eventdata.scancode
                 if scancode == 28:
-                    handle_input(barcode)
-                    # Report what we scanned and reset
+                    # Report what we scanned, handle and reset
                     print(f">{barcode}<")
+                    handle_input(barcode)
                     barcode = ""
                     # If we get a shift key
                 elif scancode == 42 or scancode == 54:

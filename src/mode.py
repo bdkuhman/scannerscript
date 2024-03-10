@@ -3,14 +3,21 @@ from enum import Enum
 
 import time
 
-MODE_REGEX = envvar("MODE_REGEX", r"^_CMD:MODE=(.*)$")
-
 class Mode(Enum):
     IDLE = 0
+    CMD = 1
+
+class Context(Enum):
+    BCB_QTY = 0
+
 
 scannermode = Mode.IDLE
+scannerctx = None
+
+
 lastscan = time.time()  # script load
-def reset_mode():
+
+def check_timeout():
     global scannermode
     global lastscan
 
@@ -21,5 +28,33 @@ def reset_mode():
 
     if (now - lastscan) >= 180:  # 3 minutes
         print("resetting scan mode")
-        scannermode = Mode.IDLE
+        set_mode(Mode.IDLE)
     lastscan = now
+
+def set_mode(mode):
+    global scannermode
+    scannermode = mode #TODO: exceptions
+    print(f"Current scanner mode is {scannermode}")
+
+def set_context(context):
+    global scannerctx
+    scannerctx = context
+    print(f"Current mode context is {scannerctx}")
+
+def get_mode():
+    global scannermode
+    return scannermode
+
+def get_context():
+    global scannerctx
+    return scannerctx
+
+def reset_context():
+    set_context(None)
+
+def reset_mode():
+    set_mode(Mode.IDLE)
+
+def reset():
+    reset_mode()
+    reset_context()
