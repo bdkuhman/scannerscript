@@ -1,7 +1,8 @@
-FROM python
+FROM python:3
 
-RUN pip install evdev
+COPY requirements.txt /
+RUN pip install -r requirements.txt
 
-ADD script.py /
+ADD src/ /script
 
-ENTRYPOINT python /script.py
+ENTRYPOINT python3 /script/script.py
